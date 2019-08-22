@@ -1,0 +1,10 @@
+.reverse-button {
+  padding: 20px 0;
+}
+.reverse-button button:first-child {
+  margin-right: 10px;
+}
+
+.reverse h3:last-child {
+  font-style: italic;
+}

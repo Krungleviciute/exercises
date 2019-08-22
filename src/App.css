@@ -1,0 +1,46 @@
+.App {
+  background-color: #1f2833;
+  height: auto;
+  margin: 0 auto;
+}
+
+.triangle-container,
+.reverse-container,
+.linkedList-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: auto;
+  padding-top: 20px;
+  height: auto;
+}
+
+.triangle:hover,
+.reverse:hover,
+.linkedList:hover {
+  width: 93%;
+  padding: 20px 50px;
+}
+
+.triangle,
+.reverse,
+.linkedList {
+  background-color: #c5c6c7;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  padding: 15px 40px;
+  border-radius: 10px;
+  -moz-transition: width 1s, padding 1s;
+  -webkit-transition: width 1s, padding 1s;
+  -o-transition: width 1s, padding 1s;
+  transition: width 1s, padding 1s;
+}
+
+.errorMessage {
+  color: red;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.2em;
+}
