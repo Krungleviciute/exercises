@@ -10,9 +10,10 @@ class LinkedList extends Component {
     this[head] = null;
     this.state = {
       currentInput: "",
-      numbersArray: [],
+      insertedValues: [],
       value: "",
-      errorMessage: ""
+      errorMessage: "",
+      currentIndex: null
     };
   }
 
@@ -21,12 +22,18 @@ class LinkedList extends Component {
     const newNode = new LinkedListNode(data);
     if (this[head] === null) {
       this[head] = newNode;
+      this.setCurrentIndex(0);
+      console.log(newNode.data, 0);
     } else {
       let current = this[head];
+      let i = 1;
       while (current.next !== null) {
         current = current.next;
+        i++;
       }
       current.next = newNode;
+      this.setCurrentIndex(i);
+      console.log(newNode.data, i);
     }
   }
 
@@ -39,14 +46,24 @@ class LinkedList extends Component {
         current = current.next;
         i++;
       }
-      this.setState({
-        value: current.data
-      });
+      this.setValue(current.data);
       return current !== null ? current.data : undefined;
     } else {
       return undefined;
     }
   }
+
+  setCurrentIndex = currIndex => {
+    this.setState({
+      currentIndex: currIndex
+    });
+  };
+
+  setValue = data => {
+    this.setState({
+      value: data
+    });
+  };
 
   handleInput = e => {
     this.setState({
@@ -55,32 +72,28 @@ class LinkedList extends Component {
   };
 
   handleInsert = () => {
-    this.state.currentInput.length > 0 &&
-      this.setState(
-        prevState => {
-          prevState.numbersArray.push(this.state.currentInput);
-        },
-        () => {
-          this.setState({ currentInput: "" });
-        }
-      );
+    this.state.currentInput > 0 &&
+      this.generateLinkedList(this.state.currentInput);
   };
 
-  generateLinkedList = array => {
-    for (let i = 0; i < array.length; i++) {
-      this.add(array[i]);
-    }
+  generateLinkedList = value => {
+    this.add(value);
+  };
+
+  errorMessage = text => {
+    this.setState({
+      errorMessage: text
+    });
   };
 
   getTheFifthValue = () => {
-    let array = this.state.numbersArray;
-    let arrayLength = array.length;
-    if (arrayLength < 5) {
-      this.setState({ errorMessage: "Not enough inserted values" });
+    const index = Number(this.state.currentIndex);
+
+    if (index < 4) {
+      this.errorMessage("Not enough values inserted");
     } else {
-      this.generateLinkedList(array);
-      this.get(arrayLength - 5);
-      this.setState({ errorMessage: "" });
+      this.get(index - 4);
+      this.errorMessage("");
     }
   };
 
@@ -117,21 +130,16 @@ class LinkedList extends Component {
             </div>
           </div>
           <div>
-            <h4>Already inserted values: </h4>
-            {this.state.numbersArray.map((number, index) => (
-              <h5 key={index} style={{ display: "inline-block" }}>
-                {number},
-              </h5>
-            ))}
+            <h4>Already inserted values: {this.state.insertedValues}</h4>
           </div>
           <div>
             <button className="btn btn-dark" onClick={this.getTheFifthValue}>
               Click to get the 5-th value of Linked List
             </button>
           </div>
-          <div>
-            {this.state.value.length > 0 && <h3>{this.state.value}</h3>}
-          </div>
+          {this.state.value.length > 0 && (
+            <h4>5th value is: {this.state.value}</h4>
+          )}
         </div>
       </div>
     );
