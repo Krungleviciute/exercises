@@ -21,29 +21,45 @@ class Triangle extends Component {
   };
 
   handleSubmit = e => {
-    this.notEmpty() ? this.triangleType() : this.errorMessage();
+    this.notEmpty()
+      ? this.isTriangleExists()
+        ? this.triangleType()
+        : this.errorMessage("Triangle does not exists")
+      : this.errorMessage("Input field/fields cannot be empty");
   };
 
-  errorMessage = () => {
+  errorMessage = message => {
     this.setState({
-      errorMessage: "Input field/fields cannot be empty"
+      errorMessage: message
     });
+  };
+
+  setTriangleType = type => {
+    this.setState({
+      typeOfTriangle: type
+    });
+  };
+
+  isTriangleExists = () => {
+    const firstInput = Number(this.state.firstInput);
+    const secondInput = Number(this.state.secondInput);
+    const thirdInput = Number(this.state.thirdInput);
+    return (
+      thirdInput < firstInput + secondInput &&
+      secondInput < firstInput + thirdInput &&
+      firstInput < secondInput + thirdInput
+    );
   };
 
   triangleType = () => {
     if (this.isTriangleEquilateral()) {
-      this.setState({
-        typeOfTriangle: "Equilateral"
-      });
+      this.setTriangleType("Equilateral");
     } else if (this.isTriangleIsosceles()) {
-      this.setState({
-        typeOfTriangle: "Isosceles"
-      });
+      this.setTriangleType("Isosceles");
     } else {
-      this.setState({
-        typeOfTriangle: "Scalene"
-      });
+      this.setTriangleType("Scalene");
     }
+    this.errorMessage("");
   };
 
   notEmpty = () => {
@@ -132,7 +148,7 @@ class Triangle extends Component {
             </div>
           </div>
           <div className="result" style={{ padding: "10px 0" }}>
-            {this.state.typeOfTriangle.length > 0 && (
+            {this.state.errorMessage.length === 0 && (
               <h2>
                 The triangle is: <b>{this.state.typeOfTriangle}</b>{" "}
               </h2>
