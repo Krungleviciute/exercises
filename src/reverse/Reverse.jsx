@@ -2,6 +2,9 @@ import React, { Component } from "react";
 import "./reverse.css";
 import "../App.css";
 
+const regexWithComa = /[a-zA-Z']+/gm;
+const regexPlainWord = /[a-zA-Z]+/gm;
+
 class Reverse extends Component {
   constructor(props) {
     super(props);
@@ -17,18 +20,26 @@ class Reverse extends Component {
     });
   };
 
-  //viskas veikia reikia tik sutvarkyt
+  reverseWord = (word, regex) => {
+    return word.replace(regex, function(text) {
+      return text
+        .split("")
+        .reverse()
+        .join("");
+    });
+  };
+
   reverseSentence = () => {
     const arrSentence = this.state.sentence.split(" ");
     const reversedArraay = [];
     console.log(arrSentence);
+
     for (let i = 0; i < arrSentence.length; i++) {
-      reversedArraay.push(
-        arrSentence[i]
-          .split("")
-          .reverse()
-          .join("")
-      );
+      if ((arrSentence[i].match(/'/g) || []).length === 1) {
+        reversedArraay.push(this.reverseWord(arrSentence[i], regexWithComa));
+      } else {
+        reversedArraay.push(this.reverseWord(arrSentence[i], regexPlainWord));
+      }
     }
     this.setState({
       reversedSentence: reversedArraay.join(" ")
