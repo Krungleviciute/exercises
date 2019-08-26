@@ -12,8 +12,7 @@ class LinkedList extends Component {
       currentInput: "",
       insertedValues: [],
       value: "",
-      errorMessage: "",
-      currentIndex: null
+      errorMessage: ""
     };
   }
 
@@ -22,41 +21,44 @@ class LinkedList extends Component {
     const newNode = new LinkedListNode(data);
     if (this[head] === null) {
       this[head] = newNode;
-      this.setCurrentIndex(0);
-      console.log(newNode.data, 0);
+      console.log(newNode.data);
     } else {
       let current = this[head];
-      let i = 1;
       while (current.next !== null) {
         current = current.next;
-        i++;
       }
       current.next = newNode;
-      this.setCurrentIndex(i);
-      console.log(newNode.data, i);
+      console.log(newNode.data);
     }
   }
 
-  //this function gets the value of node with given index
-  get(index) {
-    if (index > -1) {
-      let current = this[head];
-      let i = 0;
-      while (current !== null && i < index) {
-        current = current.next;
-        i++;
-      }
-      this.setValue(current.data);
-      return current !== null ? current.data : undefined;
+  //this is where the magic happens. n - indicates the value, we want to get from the end
+  getNthToLastValue = n => {
+    if (this[head] === null || n < 1) {
+      return null;
     } else {
-      return undefined;
-    }
-  }
+      //creating two pointers
+      let nthBehind = this[head];
+      let current = this[head];
 
-  setCurrentIndex = currIndex => {
-    this.setState({
-      currentIndex: currIndex
-    });
+      //in for loop pointer 'current' iterates through n elements
+      for (let i = 0; i < n; ++i) {
+        if (current === null) {
+          return null;
+        }
+        current = current.next;
+      }
+
+      //in while loop we are now continue iterating through the end of the list.
+      //nthBehind starts iterate from very begining.
+      //And by the time 'current' pointer reaches the end 'nthBegind' pointer stops at that nth value
+      while (current !== null) {
+        nthBehind = nthBehind.next;
+        current = current.next;
+      }
+      this.setValue(nthBehind.data);
+      return nthBehind.data;
+    }
   };
 
   setValue = data => {
@@ -78,6 +80,7 @@ class LinkedList extends Component {
 
   generateLinkedList = value => {
     this.add(value);
+    this.setState({ currentInput: "" });
   };
 
   errorMessage = text => {
@@ -87,13 +90,14 @@ class LinkedList extends Component {
   };
 
   getTheFifthValue = () => {
-    const index = Number(this.state.currentIndex);
+    this.getNthToLastValue(5) === null
+      ? this.errorMessage("Not enough values inserted")
+      : this.getNthToLastValue(5) && this.errorMessage("");
+  };
 
-    if (index < 4) {
-      this.errorMessage("Not enough values inserted");
-    } else {
-      this.get(index - 4);
-      this.errorMessage("");
+  keyPressed = event => {
+    if (event.key === "Enter") {
+      this.handleInsert();
     }
   };
 
@@ -105,15 +109,16 @@ class LinkedList extends Component {
           {this.state.errorMessage.length > 0 && (
             <span className="errorMessage">{this.state.errorMessage}</span>
           )}
-          <div className="input-group mb-3">
+          <div className="input-group mb-3" style={{ width: "45%" }}>
             <input
               className="form-control"
               type="number"
               aria-label="Recipient's username"
               aria-describedby="button-addon2"
               name="currentInput"
-              placeholder="Insert numbers into a list (once at a time)"
+              placeholder="Insert numbers to linked list (once at a time)"
               onChange={this.handleInput}
+              onKeyDown={this.keyPressed}
               value={this.state.currentInput}
               min="0"
               required
